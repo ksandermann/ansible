@@ -1,0 +1,7 @@
+*.retry
+*.iml
+*/.DS_Store
+.DS_Store
+ansible-runner/files/.ssh/*
+!ansible-runner/files/.ssh/config
+k8s/*
