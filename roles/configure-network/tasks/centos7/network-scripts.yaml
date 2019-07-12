@@ -1,0 +1,43 @@
+---
+- name: check if /etc/sysconfig/network-scripts/ifcfg-ens192 exists
+  stat:
+    path: /etc/sysconfig/network-scripts/ifcfg-ens192
+  register: ifcfg_ens192_exist_output
+
+- name: backup /etc/sysconfig/network-scripts/ifcfg-ens192 to /etc/sysconfig/network-scripts/ifcfg-ens192_{{ '%Y-%m-%d' | strftime }}
+  copy:
+    remote_src: true
+    src: /etc/sysconfig/network-scripts/ifcfg-ens192
+    dest: "/etc/sysconfig/network-scripts/ifcfg-ens192_{{ '%Y-%m-%d' | strftime }}"
+  when:
+    - ( ifcfg_ens192_exist_output.stat.exists | bool )
+  changed_when: false
+
+- name: template and overwrite /etc/sysconfig/network-scripts/ifcfg-ens192
+  template:
+    src: centos-ifcfg.j2
+    dest: /etc/sysconfig/network-scripts/ifcfg-ens192
+
+- name: check if /etc/sysconfig/network-scripts/route-ens192 exists
+  stat:
+    path: /etc/sysconfig/network-scripts/route-ens192
+  register: routes_ens192_exist_output
+
+- name: backup /etc/sysconfig/network-scripts/route-ens192 to /etc/sysconfig/network-scripts/route-ens192_{{ '%Y-%m-%d' | strftime }}
+  copy:
+    remote_src: true
+    src: /etc/sysconfig/network-scripts/route-ens192
+    dest: "/etc/sysconfig/network-scripts/route-ens192_{{ '%Y-%m-%d' | strftime }}"
+  when:
+    - ( routes_ens192_exist_output.stat.exists | bool )
+  changed_when: false
+
+- name: template and overwrite /etc/sysconfig/network-scripts/route-ens192
+  template:
+    src: centos-routes.j2
+    dest: /etc/sysconfig/network-scripts/route-ens192
+
+- name: restart network service
+  service:
+    name: network
+    state: restarted

@@ -1,0 +1,5 @@
+---
+k8s_bootstrap_dir: /tmp/k8s-bootstrap
+kubeconfig: ~/.kube/config
+generate_clusteraccounts: true
+local_storageclass_name: csi-local-volume

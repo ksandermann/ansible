@@ -1,0 +1,27 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: csi-cluster-admin
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: csi-cluster-admin
+subjects:
+- kind: ServiceAccount
+  name: csi-cluster-admin
+  namespace: kubetools
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: csi-cluster-reporter
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: csi-cluster-reporter
+subjects:
+- kind: ServiceAccount
+  name: csi-cluster-reporter
+  namespace: kubetools

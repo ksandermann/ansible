@@ -1,0 +1,28 @@
+---
+- name: create list with yum-utils
+  set_fact:
+    install_packages_repository_transformed_list: ["yum-utils-*"]
+
+- name: "{{ ansible_distribution }} - transforming merged list to layout name-version"
+  set_fact:
+    install_packages_repository_transformed_list: "{{ install_packages_repository_transformed_list + [ item.name + '-' + item.version ] }}"
+  with_items: "{{ install_packages_repository_merged_list }}"
+
+- name: yum install from repo
+  yum:
+    name: "{{ install_packages_repository_transformed_list }}"
+    update_cache: "{{ os_install_packages_update_cache | bool }}"
+    disable_gpg_check: "{{ os_install_packages_allow_unauthenticated | bool }}"
+    state: present
+  when: install_packages_repository_transformed_list | length > 0
+
+- name: yum install from rpm
+  yum:
+    name: "{{ os_install_packages_host_package_urls }}"
+    state: present
+    validate_certs: false
+  environment: "{{ os_install_packages_proxies }}"
+  when: os_install_packages_host_package_urls | default ([]) | length > 0
+
+- name: yum-complete-transaction
+  shell: yum-complete-transaction -y

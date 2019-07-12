@@ -1,0 +1,31 @@
+---
+# ^ begin line
+# \s* - ignore n whitespaces
+# #+ - min 1 #
+# [\s#]* - device path in /etc/fstab
+# () - begin expression
+# / - exactly one /
+# \S+ - min 1 non-whitespace char
+# \s+ - min 1 whitespace (tab, space, return)
+# \S+ - min 1 non-whitespace char
+# swap - exact match of word swap
+# \s+ - min 1 whitespace
+# .* - any character any times
+# $ end line
+# '\1' - replace original string with everything in ()
+- name: uncomment swap partition in fstab
+  replace:
+    path: /etc/fstab
+    regexp: '^\s*#+[\s#]*(/\S+\s+\S+\s+swap\s+.*)$'
+    replace: '\1'
+  register: uncomment_swap_fstab_output
+
+- name: mount -a
+  command: mount -a
+  args:
+    warn: false
+  changed_when: uncomment_swap_fstab_output.changed
+
+- name: re-enable swap
+  command: swapon -a
+  changed_when: uncomment_swap_fstab_output.changed

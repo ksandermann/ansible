@@ -1,0 +1,6 @@
+---
+- name: apt install ntpd
+  apt:
+    name: ntp
+    update_cache: true
+

@@ -1,0 +1,6 @@
+---
+- name: yum install ntpd
+  yum:
+    name: ntp
+    state: latest
+    update_cache: true

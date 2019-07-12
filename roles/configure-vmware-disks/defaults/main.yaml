@@ -1,0 +1,22 @@
+---
+###examples
+#vm_add_disk_vm_name: ats-1804-template001-test001.csi-cee.de
+#
+##vmware disks
+#vm_add_disk_disks:
+#  # ROOT OS DISK
+#  - size_gb: 50
+#    type: thin
+#    datastore: THA-T1-L-CL_SHARED_STD201
+#    state: present
+#    scsi_controller: 0
+#    unit_number: 0
+#    scsi_type: 'paravirtual'
+#  # USE SCSI CONTROLLER 3 TO PREVENT INTERFERANCE WITH K8S PROVISIONER
+#  - size_gb: 2
+#    type: thin
+#    datastore: THA-T1-L-CL_SHARED_STD201
+#    state: present
+#    scsi_controller: 3
+#    unit_number: 2
+#    scsi_type: 'paravirtual'

@@ -1,0 +1,14 @@
+---
+- import_tasks: localhost/download-certificates.yaml
+  when:
+    - configure_cas_download_from_localhost | bool
+
+- import_tasks: ubuntu1804/main.yaml
+  when:
+    - ( ansible_distribution == "Ubuntu" )
+    - ( ansible_distribution_version == "18.04" )
+
+- import_tasks: centos7/main.yaml
+  when:
+    - ( ansible_distribution == "CentOS" )
+    - ( ansible_distribution_version == "7" )

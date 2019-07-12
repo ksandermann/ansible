@@ -1,0 +1,4 @@
+- name: configure selinux
+  selinux:
+    policy: "{{ configure_selinux_policy }}"
+    state: "{{ configure_selinux_state }}"

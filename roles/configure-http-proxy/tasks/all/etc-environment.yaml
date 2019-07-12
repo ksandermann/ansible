@@ -1,0 +1,36 @@
+---
+- name: Set HTTP_PROXY to in /etc/environment to {{ set_http_proxy_etc_environment_state }}
+  become: yes
+  become_user: root
+  lineinfile:
+    path: /etc/environment
+    state: "{{ set_http_proxy_etc_environment_state }}"
+    regexp: '^HTTP_PROXY='
+    line: 'HTTP_PROXY={{ set_http_proxy_etc_environment_HTTP_PROXY }}'
+
+- name: Set HTTPS_PROXY in /etc/environment to {{ set_http_proxy_etc_environment_state }}
+  become: yes
+  become_user: root
+  lineinfile:
+    path: /etc/environment
+    state: "{{ set_http_proxy_etc_environment_state }}"
+    regexp: '^HTTPS_PROXY='
+    line: 'HTTPS_PROXY={{ set_http_proxy_etc_environment_HTTPS_PROXY }}'
+
+- name: Set http_proxy in /etc/environment to {{ set_http_proxy_etc_environment_state }}
+  become: yes
+  become_user: root
+  lineinfile:
+    path: /etc/environment
+    state: "{{ set_http_proxy_etc_environment_state }}"
+    regexp: '^http_proxy='
+    line: 'http_proxy={{ set_http_proxy_etc_environment_http_proxy }}'
+
+- name: Set https_proxy in /etc/environment to {{ set_http_proxy_etc_environment_state }}
+  become: yes
+  become_user: root
+  lineinfile:
+    path: /etc/environment
+    state: "{{ set_http_proxy_etc_environment_state }}"
+    regexp: '^https_proxy='
+    line: 'https_proxy={{ set_http_proxy_etc_environment_https_proxy }}'

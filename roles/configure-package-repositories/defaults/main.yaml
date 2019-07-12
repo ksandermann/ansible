@@ -1,0 +1,31 @@
+---
+configure_repositories_source_file_name: added_by_ansible_{{ '%Y-%m-%d' | strftime }}
+
+
+###examples
+
+#configure_repositories_yum_repositories:
+#  - name: epel
+#    description: EPEL YUM repo
+#    baseurl: https://download.fedoraproject.org/pub/epel/$releasever/$basearch/
+#    gpgcheck: no
+#    state: present
+#
+#configure_repositories_apt_repositories_raw:
+#  - url: "deb http://dl.google.com/linux/chrome/deb/ stable main"
+#    state: present
+#
+#configure_repositories_apt_proxies:
+#  http_proxy: http://193.29.130.72:51187
+#  https_proxy: http://193.29.130.72:51187
+
+#TODO: not working atm
+#apt_repositories_ppa:
+#  - "ppa:nginx/stable"
+
+#configure_repositories_yum_repositories_gpg_urls:
+#  - "https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-{{ ansible_distribution_major_version }}"
+
+#configure_repositories_yum_proxies:
+  #  http_proxy: http://193.29.130.72:51187
+  #  https_proxy: http://193.29.130.72:51187

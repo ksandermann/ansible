@@ -1,0 +1,24 @@
+---
+- name: template crts to /etc/pki/ca-trust/source/anchors/
+  template:
+    src: cert.pem.j2
+    dest: /etc/pki/ca-trust/source/anchors/{{ item.host }}{{ item.index }}.crt
+  with_items: "{{ configure_certificate_authorities_tempvars.certs }}"
+  when:
+    - item.cert | length > 1
+  register: template_crts_output
+  no_log: true
+
+
+- name: copy crt files to /etc/pki/ca-trust/source/anchors/
+  copy:
+    src: "{{ item }}"
+    dest: /etc/pki/ca-trust/source/anchors/
+  with_items: "{{ configure_cas_file_paths }}"
+  when: configure_cas_file_paths | default([]) | length > 0
+
+- name: update certificate authority store
+  shell: "update-ca-trust"
+  register: update_ca_certs_command
+  failed_when: "update_ca_certs_command.rc != 0"
+  changed_when: template_crts_output.changed

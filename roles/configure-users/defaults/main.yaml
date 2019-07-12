@@ -1,0 +1,12 @@
+configure_users_list: #https://docs.ansible.com/ansible/latest/modules/user_module.html
+  - name: carstenw #mandatory
+    uid: 12345
+    shell: /bin/bash
+    group: admins #primary group
+    groups: admins,developers
+    append: yes
+    comment: "Carsten Woeltjen" # user account comment
+    create_home: true
+    password: "lololo"
+    system: no
+    state: present

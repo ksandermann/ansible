@@ -1,0 +1,17 @@
+---
+
+- name: merge lists configure_path_env_paths_default_list and configure_path_env_paths
+  set_fact:
+    configure_path_env_paths_merged_list: "{{ configure_path_env_paths_default_list + configure_path_env_paths }}"
+
+- name: remove duplicated from configure_path_env_paths_merged_list_transformed and join with ':' separator
+  set_fact:
+    configure_path_env_paths_merged_list_transformed: "{{ configure_path_env_paths_merged_list  | unique | join(':') }}"
+
+- name: set PATH in /etc/environment to {{ configure_path_env_paths_merged_list_transformed }}
+  become: yes
+  become_user: root
+  lineinfile:
+    path: /etc/environment
+    regexp: '^PATH='
+    line: 'PATH={{ configure_path_env_paths_merged_list_transformed }}'

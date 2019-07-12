@@ -1,0 +1,7 @@
+---
+configure_docker_proxy_modify: false
+##examples
+#configure_docker_proxy_state: "present"
+#configure_docker_http_proxy: "http://193.29.130.72:51187"
+#configure_docker_https_proxy: "http://193.29.130.72:51187"
+#configure_docker_no_proxy: "localhost,127.0.0.1"

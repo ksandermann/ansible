@@ -1,0 +1,11 @@
+---
+- name: template k8s manifest for namespace {{ item.key }}
+  template:
+    src: ./templates/namespace.yaml.j2
+    dest: "{{k8s_bootstrap_dir}}/{{ item.key }}.namespace.yaml"
+
+- name: create namespace {{ item.key }}
+  shell: "kubectl --kubeconfig {{kubeconfig}} apply -f {{k8s_bootstrap_dir}}/{{ item.key }}.namespace.yaml"
+  register: kubectl_result
+  changed_when: ('created' in kubectl_result.stdout) or
+                ('configured' in kubectl_result.stdout)

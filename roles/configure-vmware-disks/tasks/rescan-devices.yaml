@@ -1,0 +1,43 @@
+---
+- name: find scsi hosts
+  find:
+    paths: /sys/class/scsi_host/
+    file_type: any
+  register: scsi_hosts_output
+
+- name: rescan all scsi hosts with echo "- - -" > /sys/class/scsi_host/host0/scan
+  shell: "echo '- - -' > {{ item.path }}/scan"
+  with_items: "{{ scsi_hosts_output.files }}"
+  changed_when: configure_disks_output.changed
+  no_log: true
+  when:
+    - configure_disks_output.changed | bool
+
+- name: find scsi devices
+  find:
+    paths: /sys/class/scsi_device/
+    file_type: any
+  register: scsi_device_output
+
+- name: rescan all scsi devices with echo 1 > /sys/class/scsi_device/0\:0\:0\:0/device/rescan
+  shell: "echo 1 > {{ item.path }}/device/rescan"
+  with_items: "{{ scsi_device_output.files }}"
+  changed_when: configure_disks_output.changed
+  no_log: true
+  when:
+    - configure_disks_output.changed | bool
+
+- name: find block devices
+  find:
+    paths: /sys/block
+    file_type: any
+  register: block_devices_output
+
+- name: rescan all block devices with echo 1 > /sys/block/sda/device/rescan
+  shell: "echo 1 > {{ item.path }}/device/rescan"
+  with_items: "{{ block_devices_output.files }}"
+  when:
+    - "'sd' in item.path"
+    - configure_disks_output.changed | bool
+  changed_when: configure_disks_output.changed
+  no_log: true

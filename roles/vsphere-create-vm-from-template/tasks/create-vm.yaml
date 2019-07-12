@@ -1,0 +1,71 @@
+---
+- name: Ensure VM of name {{ vsphere_vm_name }} does not exist yet
+  vmware_guest_facts:
+    hostname: "{{ vsphere_management_vcenter_ip }}"
+    port: "{{ vsphere_management_vcenter_port }}"
+    username: "{{ vsphere_management_user }}"
+    password: "{{ vsphere_management_password }}"
+    validate_certs: "{{ vsphere_validate_certs }}"
+    datacenter: "{{ vsphere_datacenter }}"
+    name: "{{ vsphere_vm_name }}"
+  delegate_to: localhost
+  register: vm_facts
+  ignore_errors: yes
+
+
+# VSphere API call did not fail, but could not get the VM -> VM does not exist
+- name: Set vm_already_existing to false
+  set_fact:
+    vm_already_existing: false
+  when: vm_facts.failed
+
+
+# VSphere API call succeeded -> VM does exist
+- name: Set vm_already_existing to true
+  set_fact:
+    vm_already_existing: true
+  when:
+  - not vm_facts.failed
+  - '"instance_uuid" in vm_facts.instance'
+
+
+# VM does exist
+- name: VM already existing
+  debug:
+    msg: "VM with this name already exists! Skipping VM {{ vsphere_vm_name }}."
+  when:
+  - vm_already_existing | bool
+
+
+- name: Creating VM {{ vsphere_vm_name }} from template {{ vsphere_template_name }}
+  vmware_guest:
+    hostname: "{{ vsphere_management_vcenter_ip }}"
+    port: "{{ vsphere_management_vcenter_port }}"
+    username: "{{ vsphere_management_user }}"
+    password: "{{ vsphere_management_password }}"
+    validate_certs: "{{ vsphere_validate_certs }}"
+    datacenter: "{{ vsphere_datacenter }}"
+    cluster: "{{ vsphere_cluster }}"
+    resource_pool: "{{ vsphere_resource_pool }}"
+    folder: "{{ vsphere_folder }}"
+    state: "{{ vsphere_vm_state }}"
+    name: "{{ vsphere_vm_name }}"
+    template: "{{ vsphere_template_name }}"
+    hardware:
+      num_cpus: "{{ vsphere_vm_cpus }}"
+      memory_mb: "{{ vsphere_vm_memory }}"
+    networks:
+    - vlan: "{{ vsphere_vm_network_vlan_id }}"
+      type: "{{ vsphere_vm_network_type }}"
+      ip: "{{ vsphere_vm_network_ip }}"
+      netmask: "{{ vsphere_vm_network_netmask }}"
+      gateway: "{{ vsphere_vm_network_gateway }}"
+      dns_servers: "{{ vsphere_vm_network_dns_servers }}"
+    wait_for_ip_address: "{{ vsphere_vm_wait_for_ip }}"
+    customization:
+      autologon: "{{ vsphere_vm_custom_autologon }}"
+      dns_servers: "{{ vsphere_vm_network_dns_servers }}"
+      hostname: "{{ vsphere_vm_custom_hostname }}"
+  delegate_to: localhost
+  when:
+    -  not vm_already_existing | bool

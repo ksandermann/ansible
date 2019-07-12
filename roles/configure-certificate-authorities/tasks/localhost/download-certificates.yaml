@@ -1,0 +1,42 @@
+---
+- name: localhost - download chains for all certs
+  shell: "openssl s_client -showcerts -connect {{ item.host }}:{{ item.port }} -servername {{ item.host }} </dev/null | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' "
+  environment: "{{ configure_cas_proxies }}"
+  register: download_certs_chain_output
+  delegate_to: localhost
+  with_items: "{{ configure_cas_download_urls }}"
+  changed_when: false
+
+- name: localhost - create tmp directory
+  file:
+    path: /tmp/ansible/configure-certificate_authorities
+    state: directory
+    mode: '0755'
+  changed_when: false
+  delegate_to: localhost
+
+- debug:
+    msg: "{{ download_certs_chain_output.results }}"
+
+- name: localhost - templating results to /tmp/ansible/configure-certificate_authorities/tempvars.yaml
+  template:
+    src: tempvars.yaml.j2
+    dest: /tmp/ansible/configure-certificate_authorities/tempvars.yaml
+  delegate_to: localhost
+  changed_when: false
+
+
+- name: localhost - include vars of /tmp/ansible/configure-certificate_authorities/configure_certificate_authorities_tempvars.yaml
+  include_vars:
+    file: /tmp/ansible/configure-certificate_authorities/tempvars.yaml
+    name: configure_certificate_authorities_tempvars
+  delegate_to: localhost
+
+
+- name: localhost - delete tmp directory
+  file:
+    path: /tmp/ansible/configure-certificate_authorities
+    state: absent
+  changed_when: false
+  delegate_to: localhost
+

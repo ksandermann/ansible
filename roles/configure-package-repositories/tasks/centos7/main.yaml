@@ -1,0 +1,34 @@
+---
+- name: yum - add repositories to file added_by_ansible with baseurl
+  yum_repository:
+    name: "{{ item.name }}"
+    baseurl: "{{ item.baseurl }}"
+    description: "{{ item.description }}"
+    file: "{{ configure_repositories_source_file_name }}"
+    gpgcheck: "{{ item.gpgcheck | bool }}"
+    state: "{{ item.state }}"
+  with_items: "{{ configure_repositories_yum_repositories }}"
+  when:
+    - configure_repositories_yum_repositories | default ([]) | length > 0
+    - item.baseurl is defined
+
+- name: yum - add repositories to file added_by_ansible with metalink
+  yum_repository:
+    name: "{{ item.name }}"
+    metalink: "{{ item.metalink }}"
+    description: "{{ item.description }}"
+    file: "{{ configure_repositories_source_file_name }}"
+    gpgcheck: "{{ item.gpgcheck | bool }}"
+    state: "{{ item.state }}"
+  with_items: "{{ configure_repositories_yum_repositories }}"
+  when:
+    - configure_repositories_yum_repositories | default ([]) | length > 0
+    - item.metalink is defined
+
+- name: yum - import gpg keys
+  rpm_key:
+    key: "{{ item }}"
+    state: present
+  with_items: "{{ configure_repositories_yum_repositories_gpg_urls }}"
+  environment: "{{ configure_repositories_yum_proxies }}"
+  when: configure_repositories_yum_repositories_gpg_urls | default ([]) | length > 0

@@ -1,0 +1,10 @@
+---
+- include: proxy.yaml
+  tags:
+    - proxy
+    - http
+    - docker
+  when:
+    - ( configure_docker_proxy_modify | bool )
+    - ( configure_docker_http_proxy is defined )
+    - ( configure_docker_https_proxy is defined )

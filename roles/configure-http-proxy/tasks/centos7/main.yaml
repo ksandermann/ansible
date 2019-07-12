@@ -1,0 +1,10 @@
+---
+- name: Set proxy in /etc/yum.conf to {{ set_http_proxy_yum_config_state }}
+  become: yes
+  become_user: root
+  lineinfile:
+    path: /etc/yum.conf
+    create: yes
+    state: "{{ set_http_proxy_yum_config_state }}"
+    regexp: '^proxy='
+    line: 'proxy={{ set_http_proxy_yum_config_http_proxy }}'

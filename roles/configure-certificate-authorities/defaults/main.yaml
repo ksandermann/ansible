@@ -1,0 +1,14 @@
+---
+configure_cas_download_from_localhost: true
+
+#examples
+#configure_cas_file_paths:
+#  - /ansible/files/ats-ca.crt
+#configure_cas_download_urls:
+#  - host: nexus.csi.nit.de
+#    port: 443
+#  - host: grafana.csi.nit.de
+#    port: 443
+#configure_cas_proxies:
+#  http_proxy: http://193.29.130.72:51187
+#  https_proxy: http://193.29.130.72:51187

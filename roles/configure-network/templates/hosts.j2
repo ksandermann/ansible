@@ -1,0 +1,9 @@
+127.0.0.1   localhost localhost.{{ vm_network_primary_domain }} localhost4.{{ vm_network_primary_domain }} {{ vm_network_hostname }}.{{ vm_network_primary_domain }} {% for additional_domain in vm_network_additional_domains %} localhost.{{ additional_domain }} localhost4.{{ additional_domain }} {{ vm_network_hostname }}.{{ additional_domain }} {% endfor  %}
+
+::1         localhost localhost.{{ vm_network_primary_domain }} localhost6.{{ vm_network_primary_domain }} {{ vm_network_hostname }}.{{ vm_network_primary_domain }} {% for additional_domain in vm_network_additional_domains %} localhost.{{ additional_domain }} localhost6.{{ additional_domain }} {{ vm_network_hostname }}.{{ additional_domain }} {% endfor  %}
+
+
+{% for host in groups['all'] %}
+{{ hostvars[host].ansible_host }} {{ hostvars[host].vm_network_hostname }} {{ hostvars[host].vm_network_hostname }}.{{ hostvars[host].vm_network_primary_domain }} {% for additional_domain in hostvars[host].vm_network_additional_domains %} {{ hostvars[host].vm_network_hostname }}.{{ additional_domain }} {% endfor  %}
+
+{% endfor  %}

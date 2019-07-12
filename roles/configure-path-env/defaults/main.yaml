@@ -1,0 +1,14 @@
+configure_path_env_paths_user: root
+
+
+configure_path_env_paths_default_list:
+  - /usr/local/sbin
+  - /usr/local/bin
+  - /usr/sbin
+  - /usr/bin
+  - /root/bin
+
+
+##examples
+configure_path_env_paths:
+  - /bin

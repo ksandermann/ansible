@@ -1,0 +1,22 @@
+---
+- name: merge lists os_install_packages_host_repository_packagelist and os_install_packages_group_repository_packagelist
+  set_fact:
+    install_packages_repository_merged_list: "{{ os_install_packages_host_repository_packagelist + os_install_packages_group_repository_packagelist }}"
+
+- import_tasks: ubuntu1804/main.yaml
+  when:
+    - ( ansible_distribution == "Ubuntu" )
+    - ( ansible_distribution_version == "18.04" )
+
+- import_tasks: centos7/main.yaml
+  when:
+    - ( ansible_distribution == 'CentOS')
+    - ( ansible_distribution_version == '7' )
+
+- name: restart and enable services {{ os_install_packages_host_start_enable_services }}
+  service:
+    name: "{{ item }}"
+    state: started
+    enabled: true
+  with_items: "{{ os_install_packages_host_start_enable_services }}"
+  when: os_install_packages_host_start_enable_services | default([]) | length > 0

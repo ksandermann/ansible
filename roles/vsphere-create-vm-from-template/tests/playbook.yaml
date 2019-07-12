@@ -1,0 +1,32 @@
+---
+##Create Kubernetes VM from template on HDS
+- hosts: localhost
+  roles:
+  - ../../vsphere-create-vm-from-template
+  vars:
+  - vsphere_management_vcenter_ip: "193.29.131.112"
+  - vsphere_management_vcenter_port: 50187
+  - vsphere_management_user: "nit.de\\srv-vcs-ats"
+  - vsphere_management_password: "***"
+  - vsphere_validate_certs: no
+  - vsphere_datacenter: "CGI-DC"
+  - vsphere_cluster: "CL_SHARED-Std"
+  - vsphere_resource_pool: "ATS-Automation"
+  - vsphere_folder: "/CL_SHARED-Std/ATS-Automation"
+  - vsphere_vm_state: "poweredon"
+  - vsphere_vm_name: "ats-1804-template001-test.csi-cee.de"
+  - vsphere_template_name: "ats-1804-template001.csi-cee.de"
+  - vsphere_vm_cpus: 2
+  - vsphere_vm_memory: 4096
+  - vsphere_vm_network_vlan_id: 199
+  - vsphere_vm_network_type: static
+  - vsphere_vm_network_ip: 193.29.130.63
+  - vsphere_vm_network_netmask: 255.255.255.0
+  - vsphere_vm_network_gateway: 193.29.130.1
+  - vsphere_vm_network_dns_servers:
+    - 193.29.131.29
+    - 193.29.131.37
+  - vsphere_vm_custom_autologon: yes
+  - vsphere_vm_custom_hostname: "ats-1804-template001-test"
+  - vsphere_vm_provisioning_state: "present"
+  - vsphere_vm_wait_for_ip: yes

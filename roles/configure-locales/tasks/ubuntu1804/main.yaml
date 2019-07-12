@@ -1,0 +1,7 @@
+---
+- name: "generating locales {{ generate_locales }}"
+  locale_gen:
+    name: "{{ item }}"
+    state: present
+  with_items: "{{ generate_locales }}"
+  when: generate_locales | length > 0

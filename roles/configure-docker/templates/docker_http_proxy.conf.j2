@@ -1,0 +1,15 @@
+[Service]
+{% if configure_docker_http_proxy is defined %}
+Environment="HTTP_PROXY={{ configure_docker_http_proxy }}"
+Environment="http_proxy={{ configure_docker_http_proxy }}"
+{% endif %}
+
+{% if configure_docker_https_proxy is defined %}
+Environment="HTTPS_PROXY={{ configure_docker_https_proxy }}"
+Environment="https_proxy={{ configure_docker_https_proxy }}"
+{% endif %}
+
+{% if configure_docker_no_proxy is defined %}
+Environment="NO_PROXY={{ configure_docker_no_proxy }}"
+Environment="no_proxy={{ configure_docker_no_proxy }}"
+{% endif %}

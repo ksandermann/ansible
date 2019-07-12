@@ -1,0 +1,34 @@
+---
+###########################
+# Test Play
+###########################
+
+##Remove all existing proxy settings
+- hosts: test
+  remote_user: root
+  roles:
+  - ../../set-http-proxy
+  vars:
+  - set_http_proxy_etc_environment_modify: true
+  - set_http_proxy_etc_environment_state: "absent"
+  - set_http_proxy_apt_config_modify: true
+  - set_http_proxy_apt_config_state: "absent"
+  - set_http_proxy_profile_modify: true
+  - set_http_proxy_profile_state: "absent"
+  - set_http_proxy_profile_user: "root"
+
+
+##Add all proxy settings
+- hosts: test
+  remote_user: root
+  roles:
+  - ../../set-http-proxy
+  vars:
+  - set_http_proxy_etc_environment_modify: true
+  - set_http_proxy_etc_environment_state: "present"
+  - set_http_proxy_apt_config_modify: true
+  - set_http_proxy_apt_config_state: "present"
+  - set_http_proxy_profile_modify: true
+  - set_http_proxy_profile_state: "present"
+  - set_http_proxy_profile_user: "root"
+

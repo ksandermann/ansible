@@ -1,0 +1,69 @@
+---
+#test condition for setting any proxies
+- name: test if needed variables is set
+  set_fact:
+    proxies_variables_set: true
+  when:
+    - set_http_proxy_http_proxy is defined
+    - set_http_proxy_https_proxy is defined
+
+#negate condition if none proxies are set
+- name: test if needed variables is set
+  set_fact:
+    proxies_variables_set: false
+  when:
+  - proxies_variables_set is undefined
+
+- name: Error!
+  debug:
+    msg: "Skipping role set-http-proxy because no http_proxy was set..."
+  when:
+  - not proxies_variables_set
+
+- include: all/etc-environment.yaml
+  tags:
+  - proxy
+  - http
+  - environment-variables
+  when:
+    - ( set_http_proxy_etc_environment_modify | bool )
+    - ( proxies_variables_set | bool )
+
+- include: all/profile.yaml
+  tags:
+  - proxy
+  - http
+  - shell-profile
+  when:
+    - ( set_http_proxy_profile_modify | bool )
+    - ( proxies_variables_set | bool )
+
+- include: all/wget.yaml
+  tags:
+    - proxy
+    - http
+    - wget
+  when:
+    - ( set_http_proxy_wget_modify | bool )
+    - ( proxies_variables_set | bool )
+
+- include: debian-based/main.yaml
+  tags:
+  - proxy
+  - http
+  - apt
+  when:
+    - ( set_http_proxy_apt_config_modify | bool )
+    - ( proxies_variables_set | bool )
+    - ( ansible_distribution == "Debian" ) or ( ansible_distribution == "Ubuntu" )
+
+- include: centos7/main.yaml
+  tags:
+  - proxy
+  - http
+  - yum
+  when:
+    - ( set_http_proxy_yum_config_modify | bool )
+    - ( proxies_variables_set | bool )
+    - ( ansible_distribution == 'CentOS')
+    - ( ansible_distribution_version == '7' )

@@ -1,0 +1,25 @@
+---
+network:
+    version: 2
+    renderer: networkd
+    ethernets:
+        ens160:
+            #dhcp4: true
+            #dhcp-identifier: mac
+            addresses: [ {{ ansible_host }}/24 ]
+            nameservers:
+#                search: [ nit.de ]
+                addresses:
+{% for dns_server in vm_network_dns_servers %}
+                - {{ dns_server }}
+{% endfor  %}
+            routes:
+                - #default route
+                  to: 0.0.0.0/0
+                  via: {{ vm_network_ipv4_defaultgateway }}
+                  metric: 1
+{% for route in vm_network_ipv4_routes %}
+                - to: {{ route.destination }}/24
+                  via: {{ route.gateway }}
+                  metric: {{ route.weight }}
+{% endfor  %}

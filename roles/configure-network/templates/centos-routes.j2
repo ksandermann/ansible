@@ -1,0 +1,6 @@
+{% for route in vm_network_ipv4_routes %}
+ADDRESS{{ loop.index0 }}={{ route.destination }}
+NETMASK{{ loop.index0 }}=255.255.255.0
+GATEWAY{{ loop.index0 }}={{ route.gateway }}
+METRIC{{ loop.index0 }}={{ route.weight }}
+{% endfor  %}

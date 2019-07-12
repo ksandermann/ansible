@@ -1,0 +1,30 @@
+---
+- name: create directory /etc/systemd/system/docker.service.d
+  file:
+    path: /etc/systemd/system/docker.service.d
+    state: directory
+    mode: '0755'
+
+- name: template /etc/systemd/system/docker.service.d/http-proxy.conf
+  template:
+    src: docker_http_proxy.conf.j2
+    dest: /etc/systemd/system/docker.service.d/http-proxy.conf
+    owner: root
+    group: root
+    mode: '0644'
+  when:
+    - configure_docker_proxy_state == "present"
+
+- name: remove /etc/systemd/system/docker.service.d/http-proxy.conf
+  file:
+    path: /etc/systemd/system/docker.service.d/http-proxy.conf
+    state: absent
+  when:
+    - configure_docker_proxy_state == "absent"
+
+- name: daemon-reload and restart docker.service
+  systemd:
+    state: restarted
+    daemon_reload: yes
+    name: docker.service
+

@@ -1,0 +1,25 @@
+---
+- name: yum upgrade all packages, excluding kernel & foo related packages - update cache={{ os_updates_update_cache }}, disable gpg check={{ os_updates_allow_unauthenticated }}
+  yum:
+    name: '*'
+    update_cache: "{{  os_updates_update_cache }}"
+    disable_gpg_check: "{{ os_updates_allow_unauthenticated }}"
+    state: latest
+    exclude: kernel*
+  when:
+    - ( os_updates_update_mode == 'packages' )
+
+- name: yum upgrade all packages incl. kernel - update cache={{ os_updates_update_cache }}, disable gpg check={{ os_updates_allow_unauthenticated }}
+  yum:
+    name: '*'
+    update_cache: "{{  os_updates_update_cache }}"
+    disable_gpg_check: "{{ os_updates_allow_unauthenticated }}"
+    state: latest
+  when:
+    - ( os_updates_update_mode == 'dist' )
+
+- name: yum autoremove
+  yum:
+    autoremove: true
+  when:
+    - ( os_updates_remove_unused_dependencies | bool )

@@ -1,0 +1,20 @@
+---
+- name: merge lists
+  set_fact:
+    generate_locales: "{{ generate_locales_list| default([]) + [ configure_locales_default_locale ] }}"
+
+- import_tasks: ubuntu1804/main.yaml
+  when:
+    - ( ansible_distribution == "Ubuntu" )
+    - ( ansible_distribution_version == "18.04" )
+
+- name: get current locale
+  command: localectl status
+  register: localectl_status_output
+  changed_when: false
+
+- name: set locale
+  command: "localectl set-locale LANG={{ configure_locales_default_locale }}"
+  changed_when: "configure_locales_default_locale not in localectl_status_output.stdout_lines[0]"
+
+- import_tasks: etc-environment.yaml

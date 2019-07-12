@@ -1,0 +1,36 @@
+---
+- name: Set HTTP_PROXY in ~/.profile to {{ set_http_proxy_profile_state }}
+  become: yes
+  become_user: "{{ set_http_proxy_profile_user }}"
+  lineinfile:
+    path: "/{{ set_http_proxy_profile_user }}/.profile"
+    state: "{{ set_http_proxy_profile_state }}"
+    regexp: '^export HTTP_PROXY='
+    line: 'export HTTP_PROXY={{ set_http_proxy_profile_HTTP_PROXY }}'
+
+- name: Set HTTPS_PROXY in ~/.profile to {{ set_http_proxy_profile_state }}
+  become: yes
+  become_user: "{{ set_http_proxy_profile_user }}"
+  lineinfile:
+    path: "/{{ set_http_proxy_profile_user }}/.profile"
+    state: "{{ set_http_proxy_profile_state }}"
+    regexp: '^export HTTPS_PROXY='
+    line: 'export HTTPS_PROXY={{ set_http_proxy_profile_HTTPS_PROXY }}'
+
+- name: Set http_proxy in ~/.profile to {{ set_http_proxy_profile_state }}
+  become: yes
+  become_user: "{{ set_http_proxy_profile_user }}"
+  lineinfile:
+    path: "/{{ set_http_proxy_profile_user }}/.profile"
+    state: "{{ set_http_proxy_profile_state }}"
+    regexp: '^export http_proxy='
+    line: 'export http_proxy={{ set_http_proxy_profile_http_proxy }}'
+
+- name: Set https_proxy in ~/.profile to {{ set_http_proxy_profile_state }}
+  become: yes
+  become_user: "{{ set_http_proxy_profile_user }}"
+  lineinfile:
+    path: "/{{ set_http_proxy_profile_user }}/.profile"
+    state: "{{ set_http_proxy_profile_state }}"
+    regexp: '^export https_proxy='
+    line: 'export https_proxy={{ set_http_proxy_profile_https_proxy }}'

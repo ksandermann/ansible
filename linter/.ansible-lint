@@ -1,0 +1,14 @@
+parseable: true
+quiet: false
+skip_list:
+ - '305' # Use shell only when shell functionality is required
+ - '503' # Tasks that run when changed should likely be handlers
+ - '403' # Package installs should not use latest
+ - '306' # Shells that use pipes should set the pipefail option
+ - '204' # Lines should be no longer than 160 chars
+ - '701' # meta/main.yaml galaxy params errors
+ - '301' # Commands should not change things if nothing needs doing
+
+
+use_default_rules: true
+verbosity: 1

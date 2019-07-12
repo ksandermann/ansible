@@ -1,0 +1,4 @@
+---
+- import_tasks: vsphere.yaml
+
+- import_tasks: rescan-devices.yaml

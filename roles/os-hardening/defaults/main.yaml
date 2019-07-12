@@ -1,0 +1,3 @@
+---
+system_hardening_net_ipv4_tcp_timestamps_state: absent
+

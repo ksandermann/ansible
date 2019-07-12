@@ -1,0 +1,5 @@
+---
+- name: create tmp directory
+  file:
+    path: "{{k8s_bootstrap_dir}}"
+    state: directory

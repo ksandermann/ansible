@@ -1,0 +1,14 @@
+---
+- import_tasks: set-hostname.yaml
+
+- import_tasks: template-etc-hosts.yaml
+
+- import_tasks: ubuntu1804/main.yaml
+  when:
+    - ( ansible_distribution == "Ubuntu" )
+    - ( ansible_distribution_version == "18.04" )
+
+- import_tasks: centos7/main.yaml
+  when:
+    - ( ansible_distribution == 'CentOS')
+    - ( ansible_distribution_version == '7' )

@@ -1,0 +1,40 @@
+---
+- name: setting apt_update_mode to {{ os_updates_update_mode }}
+  set_fact:
+    apt_update_mode: no
+  when:
+    - ( os_updates_update_mode == 'none' )
+
+- name: setting apt_update_mode to {{ os_updates_update_mode }}
+  set_fact:
+    apt_update_mode: dist
+  when:
+    - ( os_updates_update_mode == 'dist' )
+
+- name: setting apt_update_mode to {{ os_updates_update_mode }}
+  set_fact:
+    apt_update_mode: yes
+  when:
+    - ( os_updates_update_mode == 'packages' )
+
+- name: apt update
+  apt:
+    update_cache: "{{ os_updates_update_cache }}"
+    allow_unauthenticated: "{{ os_updates_allow_unauthenticated }}"
+
+- name: apt upgrade {{ os_updates_update_mode }}
+  apt:
+    upgrade: "{{ apt_update_mode }}"
+    allow_unauthenticated: "{{ os_updates_allow_unauthenticated }}"
+
+- name: apt autoclean
+  apt:
+    autoclean: yes
+  when:
+    - ( os_updates_clean_cache | bool )
+
+- name: apt autoremove
+  apt:
+    autoremove: yes
+  when:
+    - ( os_updates_remove_unused_dependencies | bool )

@@ -1,0 +1,9 @@
+---
+- include: create-vm.yaml
+  tags:
+  - vsphere
+  - vmware
+  - vm
+  - provisioning
+  when:
+  - vsphere_vm_provisioning_state == "present"

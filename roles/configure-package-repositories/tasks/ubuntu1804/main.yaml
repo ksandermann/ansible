@@ -1,0 +1,18 @@
+---
+- name: apt - add repositories via link
+  apt_repository:
+    repo: "{{ item.url }}"
+    state: "{{ item.state }}"
+    filename: "{{ configure_repositories_source_file_name }}"
+    update_cache: true
+  with_items: "{{ configure_repositories_apt_repositories_raw }}"
+  environment: "{{ configure_repositories_apt_proxies }}"
+  when: configure_repositories_apt_repositories_raw | default ([]) | length > 0
+
+#TODO: not working atm
+#- name: apt - add repositories via ppa
+#  apt_repository:
+#    repo: "ppa:nginx/stable"
+#  with_items: "{{ apt_repositories_ppa }}"
+#  environment: "{{ configure_repositories_proxies }}"
+#  when: apt_repositories_ppa | default ([]) | length > 0

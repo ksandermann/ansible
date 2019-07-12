@@ -1,0 +1,5 @@
+---
+configure_locales_default_locale: en_US.UTF-8
+configure_locales_generated_locales:
+  - en_US.UTF-8
+configure_locales_etc_environments_state: present

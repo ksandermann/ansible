@@ -1,0 +1,44 @@
+---
+- name: set var pv_list
+  set_fact:
+    pv_list: "{{ ansible_lvm.pvs | dict2items(key_name='device', value_name='attributes')  | json_query(\"[?attributes.vg=='system']\") | list }}"
+
+- name: set var configure_system_partition_device
+  set_fact:
+    configure_system_partition_device: "{{ pv_list[0].device }}"
+
+- name: set var configure_system_partition_growpart_param
+  set_fact:
+    configure_system_partition_growpart_param: "{{ configure_system_partition_device | regex_replace('^(.*)([0-9]+)$', '\\1 \\2') }}"
+
+#https://www.systutorials.com/docs/linux/man/1-growpart/
+- name: growpart partition
+  shell: "growpart {{ configure_system_partition_growpart_param }}"
+  register: growpart_output
+  changed_when:
+    - growpart_output.rc == 0
+  failed_when: growpart_output.rc == 2
+
+- name: pvresize device
+  shell: "pvresize {{ configure_system_partition_device }}"
+  register: pvresize_output
+  changed_when:
+    - growpart_output.rc == 0
+
+- name: find /dev/mapper/system-*
+  shell: "mount | grep ' / ' | cut -d' ' -f1"
+  args:
+    warn: false
+  register: mount_lvname_output
+  changed_when: false
+
+- name: set var configure_system_partition_root_lv
+  set_fact:
+    configure_system_partition_root_lv: "{{ mount_lvname_output.stdout | regex_replace('/dev/mapper/.*-(.*)', '\\1') }}"
+
+- name: extend
+  lvol:
+    vg: system
+    lv: "{{ configure_system_partition_root_lv }}"
+    size: +100%FREE
+    resizefs: true

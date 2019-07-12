@@ -1,0 +1,57 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  labels:
+    app: grafana-grafana
+    chart: grafana-{{ grafana_helmchart_version }}
+    component: grafana
+    heritage: Tiller
+    release: grafana
+  name: grafana-grafana-set-dashboard
+  namespace: {{ monitoring_namespace }}
+spec:
+  activeDeadlineSeconds: 300
+  template:
+    metadata:
+      labels:
+        app: grafana-grafana
+        component: grafana
+        release: grafana
+    spec:
+      containers:
+      - args:
+  {% for dashboard in grafana_common_dashboards %}
+- http://$(ADMIN_USER):$(ADMIN_PASSWORD)@grafana-grafana:80/api/dashboards/db
+- --max-time
+- "10"
+- -H
+- 'Content-Type: application/json;charset=UTF-8'
+- --data-binary
+- '{"dashboard": {{ dashboard.value | regex_replace("id","id2")}}, "overwrite": true }'
+- --next
+  {% endfor %}
+  {% for dashboard in grafana_project_dashboards %}
+- http://$(ADMIN_USER):$(ADMIN_PASSWORD)@grafana-grafana:80/api/dashboards/db
+- --max-time
+- "10"
+- -H
+- 'Content-Type: application/json;charset=UTF-8'
+- --data-binary
+- '{"dashboard": {{ dashboard.value  }}, "overwrite": true }'
+- --next
+  {% endfor %}
+env:
+- name: ADMIN_USER
+  valueFrom:
+    secretKeyRef:
+      key: grafana-admin-user
+      name: grafana-grafana
+- name: ADMIN_PASSWORD
+  valueFrom:
+    secretKeyRef:
+      key: grafana-admin-password
+      name: grafana-grafana
+image: appropriate/curl:latest
+name: grafana-grafana-set-dashboard
+restartPolicy: OnFailure

@@ -1,0 +1,53 @@
+---
+- name: "gather datastore facts from datacenter {{ vsphere_datacenter }} "
+  vmware_datastore_facts:
+    hostname: "{{ vsphere_management_vcenter_ip }}"
+    port: "{{ vsphere_management_vcenter_port }}"
+    username: "{{ vsphere_management_user }}"
+    password: "{{ vsphere_management_password }}"
+    datacenter_name: "{{ vsphere_datacenter }}"
+    validate_certs: "{{ vsphere_validate_certs | bool }}"
+  delegate_to: localhost
+  run_once: true
+  register: vm_add_disks_facts_datacenter
+
+
+- block:
+  - name: configure disks of vm
+    vmware_guest_disk:
+      hostname: "{{ vsphere_management_vcenter_ip }}"
+      port: "{{ vsphere_management_vcenter_port }}"
+      username: "{{ vsphere_management_user }}"
+      password: "{{ vsphere_management_password }}"
+      datacenter: "{{ vsphere_datacenter }}"
+      validate_certs: "{{ vsphere_validate_certs | bool }}"
+      name: "{{ vsphere_vm_name }}"
+      disk: "{{ vm_add_disk_disks }}"
+    delegate_to: localhost
+    when:
+      - vm_add_disk_disks is defined
+      - vm_add_disk_disks | default([]) | length > 0
+    register: configure_disks_output
+    retries: 1
+  rescue:
+    - name: set fact vm_add_disks_facts_datacenter_filtered_sorted
+      set_fact:
+        vm_add_disks_facts_datacenter_filtered_sorted: "{{ vm_add_disks_facts_datacenter | json_query(\"datastores[?datastore_cluster=='THA-T1-L-CL_SHARED_STD-Cluster']\") | sort(attribute='freeSpace', reverse=True)  | list }}"
+      delegate_to: localhost
+      run_once: true
+    - name: set facts vm_add_disk_target_datacenter_name and vm_add_disk_target_datacenter_free_gb
+      set_fact:
+        vm_add_disk_target_datacenter_name: "{{ vm_add_disks_facts_datacenter_filtered_sorted[0].name }}"
+        vm_add_disk_target_datacenter_free_gb: "{{ vm_add_disks_facts_datacenter_filtered_sorted[0].freeSpace / 1024 / 1024 / 1024  }}"
+      delegate_to: localhost
+      run_once: true
+    - debug:
+        msg: "datastore with most space available: {{ vm_add_disk_target_datacenter_name }}, free space: {{ vm_add_disk_target_datacenter_free_gb }}GB"
+      failed_when: true
+
+
+
+
+
+
+

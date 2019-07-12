@@ -1,0 +1,11 @@
+---
+vm_network_fqdn_as_hostname: true
+
+
+
+#examples
+#vm_network_hostname: k8s-prd-template
+#vm_network_primary_domain: csi-cee.de
+#vm_network_additional_domains:
+#  - csi-cee.com
+#  - csi.nit.de

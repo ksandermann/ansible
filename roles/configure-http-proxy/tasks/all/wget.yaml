@@ -1,0 +1,36 @@
+---
+- name: Set http_proxy to in /etc/.wgetrc to {{ set_http_proxy_wget_http_proxy }}
+  lineinfile:
+    path: /etc/.wgetrc
+    create: yes
+    state: present
+    regexp: '^http_proxy ='
+    line: 'http_proxy = {{ set_http_proxy_wget_http_proxy }}'
+
+- name: Set https_proxy in /etc/.wgetrc to {{ set_http_proxy_wget_https_proxy }}
+  lineinfile:
+    path: /etc/.wgetrc
+    create: yes
+    state: present
+    regexp: '^https_proxy ='
+    line: 'https_proxy = {{ set_http_proxy_wget_https_proxy }}'
+
+- name: Set use_proxy in /etc/.wgetrc to {{ set_http_proxy_wget_state }}
+  lineinfile:
+    path: /etc/.wgetrc
+    create: yes
+    state: present
+    regexp: '^use_proxy ='
+    line: 'use_proxy = off'
+  when:
+    - set_http_proxy_wget_state == "absent"
+
+- name: Set use_proxy in /etc/.wgetrc to {{ set_http_proxy_wget_state }}
+  lineinfile:
+    path: /etc/.wgetrc
+    create: yes
+    state: present
+    regexp: '^use_proxy ='
+    line: 'use_proxy = on'
+  when:
+    - set_http_proxy_wget_state == "present"

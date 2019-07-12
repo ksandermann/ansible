@@ -1,0 +1,9 @@
+---
+- name: template apt-ping config file to /etc/apt/preferences.d/ansible-pins
+  template:
+    src: apt-pins.j2
+    dest: /etc/apt/preferences.d/ansible-pins
+
+- name: apt-get update
+  apt:
+    update_cache: yes

@@ -1,0 +1,7 @@
+---
+k8s_bootstrap_dir: /tmp/k8s-bootstrap
+serviceaccount_name: csi-cluster-admin
+serviceaccount_namespace: kubetools
+insecure_skip_tls_verify: false
+#k8s_api_server: https://193.29.130.72:6445
+test_from_localhost: true

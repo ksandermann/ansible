@@ -1,0 +1,25 @@
+---
+- include: create-resource-folder.yaml
+
+- include: generate-namespaces.yaml
+  with_dict: "{{ namespaces }}"
+  when: namespaces is defined
+
+- include: generate-serviceaccounts.yaml
+  when: generate_clusteraccounts
+
+- include: generate-clusterroles.yaml
+  when: generate_clusteraccounts
+
+- include: generate-clusterrolebindings.yaml
+  when: generate_clusteraccounts
+
+- include: generate-storageclass.yaml
+  when: persistentvolumes is defined
+
+- include: generate-persistentvolumes.yaml
+  with_dict: "{{ persistentvolumes }}"
+  when: persistentvolumes is defined
+
+- debug:
+    msg: "Success! You can find the k8s manifests for the created resources under {{ k8s_bootstrap_dir }} on {{ inventory_hostname }}"

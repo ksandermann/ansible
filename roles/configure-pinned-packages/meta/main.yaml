@@ -1,0 +1,24 @@
+---
+galaxy_info:
+  author: Kevin Sandermann
+
+dependencies:
+  - role: configure-installed-packages
+    os_install_packages_group_repository_packagelist: []
+    os_install_packages_host_repository_packagelist:
+      - name: yum-plugin-versionlock
+        version: "*"
+    when:
+      - ansible_distribution == 'CentOS'
+      - ansible_distribution_version == '7'
+      - configure_pinned_packages_yum_pins | default ([]) | length > 0
+
+  - role: configure-installed-packages
+    os_install_packages_group_repository_packagelist: []
+    os_install_packages_host_repository_packagelist:
+      - name: aptitude
+        version: "*"
+    when:
+      - ansible_distribution == 'Ubuntu'
+      - ansible_distribution_version == '18.04'
+      - configure_pinned_packages_apt_pins | default ([]) | length > 0

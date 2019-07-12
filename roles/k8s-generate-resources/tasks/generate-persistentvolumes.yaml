@@ -1,0 +1,16 @@
+---
+- name: create local directory for persistentvolume {{ item.key }}
+  file:
+    path: "{{ item.value.path }}"
+    state: directory
+
+- name: template k8s manifest for persistentvolume {{ item.key }}
+  template:
+    src: ./templates/persistentvolume.yaml.j2
+    dest: "{{k8s_bootstrap_dir}}/{{ item.key }}.persistentvolume.yaml"
+
+- name: create persistentvolume {{ item.key }}
+  shell: "kubectl --kubeconfig {{kubeconfig}} apply -f {{k8s_bootstrap_dir}}/{{ item.key }}.persistentvolume.yaml"
+  register: kubectl_result
+  changed_when: ('created' in kubectl_result.stdout) or
+                ('configured' in kubectl_result.stdout)

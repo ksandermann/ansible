@@ -1,0 +1,66 @@
+---
+- name: create tmp directory
+  file:
+      path: "{{k8s_bootstrap_dir}}"
+      state: directory
+
+- name: get {{serviceaccount_name}} secret
+  shell: kubectl get sa {{serviceaccount_name}} --namespace={{serviceaccount_namespace}} -o json | jq -r .secrets[].name
+  register: serviceaccount_secret_return
+
+- name: get name of {{serviceaccount_name}} secret
+  set_fact:
+    service_account_token_name: "{{ serviceaccount_secret_return.stdout }}"
+
+- name: get {{serviceaccount_name}} token
+  shell: kubectl get secret --namespace={{serviceaccount_namespace}} {{ service_account_token_name }} -o json | jq -r '.data["token"]' | base64 -d
+  register: service_account_token_return
+
+- name: get content of {{serviceaccount_name}} token
+  set_fact:
+    service_account_token: "{{ service_account_token_return.stdout }}"
+
+- name: kubeconfig - set clustername and url
+  shell: "kubectl --kubeconfig {{k8s_bootstrap_dir}}/{{serviceaccount_name}}.kubeconfig config set-cluster cluster.local --server={{k8s_api_server}}"
+
+- name: kubeconfig - set CA
+  shell: "kubectl --kubeconfig {{k8s_bootstrap_dir}}/{{serviceaccount_name}}.kubeconfig config set-cluster cluster.local --certificate-authority=/etc/kubernetes/ssl/ca.crt --embed-certs=true"
+  when: not insecure_skip_tls_verify
+
+- name: kubeconfig - set insecure-skip-tls-verify=true
+  shell: "kubectl --kubeconfig {{k8s_bootstrap_dir}}/{{serviceaccount_name}}.kubeconfig config set-cluster cluster.local --insecure-skip-tls-verify=true"
+  when: insecure_skip_tls_verify
+
+- name: kubeconfig - set token
+  shell: "kubectl --kubeconfig {{k8s_bootstrap_dir}}/{{serviceaccount_name}}.kubeconfig config set-credentials {{serviceaccount_name}} --token={{service_account_token}}"
+
+- name: kubeconfig - set context
+  shell: "kubectl --kubeconfig {{k8s_bootstrap_dir}}/{{serviceaccount_name}}.kubeconfig config set-context {{serviceaccount_namespace}} --cluster=cluster.local --namespace={{serviceaccount_namespace}} --user={{serviceaccount_name}}"
+
+- name: kubeconfig - switch context
+  shell: "kubectl --kubeconfig {{k8s_bootstrap_dir}}/{{serviceaccount_name}}.kubeconfig config use-context {{serviceaccount_namespace}}"
+
+- name: copy kubeconfig to localhost
+  fetch:
+    src: "{{k8s_bootstrap_dir}}/{{serviceaccount_name}}.kubeconfig"
+    dest: /k8s-bootstrap/configs/
+    flat: yes
+  when: test_from_localhost
+
+- name: test kubeconfig
+  shell: "kubectl get nodes --kubeconfig {{k8s_bootstrap_dir}}/{{serviceaccount_name}}.kubeconfig"
+
+- name: test kubeconfig from localhost
+  delegate_to: localhost
+  shell: "kubectl get nodes --kubeconfig /k8s-bootstrap/configs/{{serviceaccount_name}}.kubeconfig"
+  when: test_from_localhost
+
+- name: Success with test from localhost
+  debug:
+    msg: "Success! You can find the generated kubeconfig on your local machine under /k8s-bootstrap/configs/{{serviceaccount_name}}.kubeconfig and on your remote host under {{k8s_bootstrap_dir}}/{{serviceaccount_name}}.kubeconfig"
+  when: test_from_localhost
+
+- name: Success without test from localhost
+  debug:
+    msg: "Success! You can find the generated kubeconfig on the remote host under {{k8s_bootstrap_dir}}/{{serviceaccount_name}}.kubeconfig"
+  when: not test_from_localhost

@@ -1,0 +1,5 @@
+---
+- import_tasks: netplan.yaml
+  when:
+    - ( ansible_distribution == 'Ubuntu')
+    - ( ansible_distribution_version == '18.04' )

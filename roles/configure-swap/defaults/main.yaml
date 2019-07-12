@@ -1,0 +1,3 @@
+---
+configure_swap: false
+configure_swap_state: present

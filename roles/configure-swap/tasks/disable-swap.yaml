@@ -1,0 +1,23 @@
+---
+# ^ begin line
+# \s* - ignore n whitespaces
+# () - begin expression
+# [^#\s]+ - device path in /etc/fstab
+# \s+ - min 1 whitespace
+# \S+ - min 1 character that is not whitespace
+# \s+ - min 1 whitespace
+# swap - exact match of word swap
+# \s+ - min 1 whitespace
+# .* - any character any times
+# $ end line
+# '#\1' - replace original string with everything in () and prefix with #
+- name: comment swap partition in fstab
+  replace:
+    path: /etc/fstab
+    regexp: '^\s*([^#\s]+\s+\S+\s+swap\s+.*)$'
+    replace: '#\1'
+  register: comment_swap_fstab_output
+
+- name: disable swap
+  command: /sbin/swapoff -a
+  changed_when: comment_swap_fstab_output.changed

@@ -1,0 +1,13 @@
+certs:
+# each openssl s_client -showcerts call gets his own object in the output.result dict
+{% for result in download_certs_chain_output.results %}
+# result.stdout contains all certificates in chain as one big string - split this and remove the delimitter, then merge to a list
+# using loop.index0 as the first string in the merge list is always empty
+# b64 encode the cert and decode it later to ensure newlines are handled correctly
+{% for cert in result.stdout.split('-----BEGIN CERTIFICATE-----') | list %}
+ - host: {{ result.item.host }}
+   index: {{ loop.index0 }}
+   cert: "{{ cert | b64encode}}"
+{% endfor  %}
+{% endfor  %}
+

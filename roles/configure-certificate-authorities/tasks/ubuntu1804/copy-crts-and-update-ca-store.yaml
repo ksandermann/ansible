@@ -1,0 +1,23 @@
+---
+- name: template crts to /usr/local/share/ca-certificates/
+  template:
+    src: cert.pem.j2
+    dest: /usr/local/share/ca-certificates/{{ item.host }}{{ item.index }}.crt
+  with_items: "{{ configure_certificate_authorities_tempvars.certs }}"
+  when:
+    - item.cert | length > 1
+  no_log: true
+
+
+- name: copy crt files to /usr/local/share/ca-certificates/
+  copy:
+    src: "{{ item }}"
+    dest: /usr/local/share/ca-certificates/
+  with_items: "{{ configure_cas_file_paths }}"
+  when: configure_cas_file_paths | default([]) | length > 0
+
+- name: update certificate authority store
+  shell: "update-ca-certificates"
+  register: update_ca_certs_command
+  changed_when:
+    - "'0 added, 0 removed; done.' not in update_ca_certs_command.stdout"

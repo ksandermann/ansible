@@ -1,0 +1,12 @@
+---
+- name: set fqdn as hostname
+  hostname:
+    name: "{{ vm_network_hostname }}.{{ vm_network_primary_domain }}"
+  when:
+    - (vm_network_fqdn_as_hostname | bool )
+
+- name: set hostname without domain
+  hostname:
+    name: "{{ vm_network_hostname }}"
+  when:
+    - ( not (vm_network_fqdn_as_hostname | bool) )

@@ -1,0 +1,14 @@
+---
+- name: set timezone to {{ configure_vm_timezone }}
+  timezone:
+    name: "{{ configure_vm_timezone }}"
+
+
+- name: restart crond
+  service:
+    name: crond
+    enabled: yes
+    state: restarted
+  when:
+    - ( ansible_distribution == 'CentOS')
+    - ( ansible_distribution_version == '7' )

@@ -1,0 +1,26 @@
+---
+- name: disable net.ipv4.tcp_timestamps
+  lineinfile:
+    path: /etc/sysctl.conf
+    state: present
+    regexp: "^net.ipv4.tcp_timestamps"
+    line: "net.ipv4.tcp_timestamps = 0"
+  when: system_hardening_net_ipv4_tcp_timestamps_state == 'absent'
+  register: system_hardening_net_ipv4_tcp_timestamps_disabled_output
+
+- name: enable net.ipv4.tcp_timestamps
+  lineinfile:
+    path: /etc/sysctl.conf
+    state: present
+    regexp: "^net.ipv4.tcp_timestamps"
+    line: "net.ipv4.tcp_timestamps = 1"
+  when: system_hardening_net_ipv4_tcp_timestamps_state == 'present'
+  register: system_hardening_net_ipv4_tcp_timestamps_enabled_output
+
+
+- name: sysctl -p
+  command: "sysctl -p"
+  when: ( system_hardening_net_ipv4_tcp_timestamps_disabled_output.changed | default (false) | bool ) or
+        ( system_hardening_net_ipv4_tcp_timestamps_enabled_output.changed | default (false) | bool )
+
+

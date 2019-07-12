@@ -1,0 +1,6 @@
+---
+os_reboot: false
+os_reboot_timeout: 122
+os_reboot_pre_reboot_delay: 61
+os_reboot_post_reboot_delay: 30
+os_reboot_test_command: whoami

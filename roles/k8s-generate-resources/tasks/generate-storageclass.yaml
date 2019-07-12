@@ -1,0 +1,11 @@
+---
+- name: template k8s manifest for storageclass {{ local_storageclass_name }}
+  template:
+    src: ./templates/storageclass.yaml.j2
+    dest: "{{k8s_bootstrap_dir}}/{{local_storageclass_name}}.storageclass.yaml"
+
+- name: create storageclass {{ local_storageclass_name }}
+  shell: "kubectl --kubeconfig {{kubeconfig}} apply -f {{k8s_bootstrap_dir}}/{{local_storageclass_name}}.storageclass.yaml"
+  register: kubectl_result
+  changed_when: ('created' in kubectl_result.stdout) or
+                ('configured' in kubectl_result.stdout)

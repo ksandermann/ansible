@@ -1,0 +1,9 @@
+---
+- name: reboot machine
+  reboot:
+    reboot_timeout: "{{ os_reboot_timeout }}"
+    pre_reboot_delay: "{{ os_reboot_pre_reboot_delay }}"
+    post_reboot_delay: "{{ os_reboot_post_reboot_delay }}"
+    test_command: "{{ os_reboot_test_command }}"
+  when:
+    - ( os_reboot | bool )

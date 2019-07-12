@@ -1,0 +1,9 @@
+---
+- import_tasks: debian-based/main.yaml
+  when: ( ansible_distribution == "Debian" ) or
+        ( ansible_distribution == "Ubuntu" )
+
+- import_tasks: centos7/main.yaml
+  when:
+    - ( ansible_distribution == 'CentOS')
+    - ( ansible_distribution_version == '7' )

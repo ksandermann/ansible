@@ -1,0 +1,45 @@
+---
+os_install_packages_update_cache: true
+os_install_packages_allow_unauthenticated: false
+os_install_packages_host_repository_packagelist: []#empty list to simplify list merging
+os_install_packages_group_repository_packagelist: []#empty list to simplify list merging
+
+os_install_packages_host_package_urls: []#empty list to simplify list merging
+
+
+
+##examples
+#list to set in host_vars applying to all hosts in group
+#os_install_packages_host_repository_packagelist:
+#  - name: wget
+#    version: 1.19.3
+#  - name: curl
+#    version: 7.58* #wildcard version - only working ubuntu
+#  - name: jq
+#    version: "*" #latest
+
+#list to set in group_vars applying to all hosts in group
+#os_install_packages_group_repository_packagelist:
+#  - name: wget
+#    version: 1.19.3
+#  - name: curl
+#    version: 7.58* #wildcard version - only working ubuntu
+#  - name: jq
+#    version: "*" #latest
+
+
+#debian-based
+#os_install_packages_host_package_urls:
+#  - https://example.com/python-ppq_0.1-1_all.deb
+
+#centos7
+#os_install_packages_host_package_urls:
+#  - http://nginx.org/packages/centos/6/noarch/RPMS/nginx-release-centos-6-0.el6.ngx.noarch.rpm
+
+#centos7
+#os_install_packages_host_start_enable_services:
+#  - node_exporter
+
+#ubuntu18.04
+#os_install_packages_host_start_enable_services:
+#  - prometheus_node_exporter

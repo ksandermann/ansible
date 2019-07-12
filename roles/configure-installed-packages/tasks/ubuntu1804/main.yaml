@@ -1,0 +1,23 @@
+---
+- name: create empty list
+  set_fact:
+    install_packages_repository_transformed_list: []
+
+- name: "{{ ansible_distribution }} - transforming merged list to layout name=version"
+  set_fact:
+    install_packages_repository_transformed_list: "{{ install_packages_repository_transformed_list + [ item.name + '=' + item.version ] }}"
+  with_items: "{{ install_packages_repository_merged_list }}"
+
+- name: apt install from repo
+  apt:
+    update_cache: "{{ os_install_packages_update_cache | bool }}"
+    allow_unauthenticated: "{{ os_install_packages_allow_unauthenticated | bool }}"
+    name: "{{ install_packages_repository_transformed_list }}"
+    state: present
+  when: install_packages_repository_transformed_list |length > 0
+
+- name: apt install from deb
+  apt:
+    deb: "{{ item }}"
+  with_items: "{{ os_install_packages_host_package_urls }}"
+  environment: "{{ os_install_packages_proxies }}"

@@ -1,0 +1,61 @@
+---
+- name: check if etc/netplan/01-netcfg.yaml exists
+  stat:
+    path: /etc/netplan/01-netcfg.yaml
+  register: netcfg_01_exist_output
+
+- name: backup /etc/netplan/01-netcfg.yaml to /etc/netplan/01-netcfg.yaml_{{ '%Y-%m-%d' | strftime }}
+  copy:
+    remote_src: true
+    src: /etc/netplan/01-netcfg.yaml
+    dest: "/etc/netplan/01-netcfg.yaml_{{ '%Y-%m-%d' | strftime }}"
+  when:
+    - ( netcfg_01_exist_output.stat.exists | bool )
+  changed_when: false
+
+- name: remove /etc/netplan/01-netcfg.yaml
+  file:
+    path: /etc/netplan/01-netcfg.yaml
+    state: absent
+
+- name: check if etc/netplan/99-netcfg-vmware.yaml exists
+  stat:
+    path: /etc/netplan/99-netcfg-vmware.yaml
+  register: netcfg_vmware_99_exist_output
+
+- name: backup /etc/netplan/99-netcfg-vmware.yaml to /etc/netplan/99-netcfg-vmware.yaml_{{ '%Y-%m-%d' | strftime }}
+  copy:
+    remote_src: true
+    src: /etc/netplan/99-netcfg-vmware.yaml
+    dest: "/etc/netplan/99-netcfg-vmware.yaml_{{ '%Y-%m-%d' | strftime }}"
+  when:
+    - ( netcfg_vmware_99_exist_output.stat.exists | bool )
+  changed_when: false
+
+- name: remove /etc/netplan/99-netcfg-vmware.yaml
+  file:
+    path: /etc/netplan/99-netcfg-vmware.yaml
+    state: absent
+
+- name: check if /etc/netplan/01-netcfg-ansible.yaml exists
+  stat:
+    path: /etc/netplan/01-netcfg-ansible.yaml
+  register: ansible_netcfg_01_exist_output
+
+- name: backup /etc/netplan/01-netcfg-ansible.yaml to /etc/netplan/01-netcfg-ansible.yaml_{{ '%Y-%m-%d' | strftime }}
+  copy:
+    remote_src: true
+    src: /etc/netplan/01-netcfg-ansible.yaml
+    dest: "/etc/netplan/01-netcfg-ansible.yaml_{{ '%Y-%m-%d' | strftime }}"
+  when:
+    - ( ansible_netcfg_01_exist_output.stat.exists | bool )
+  changed_when: false
+
+- name: template and overwrite /etc/netplan/01-netcfg.yaml
+  template:
+    src: netplan-cfg.yaml.j2
+    dest: /etc/netplan/01-netcfg-ansible.yaml
+
+- name: apply netplan configuration
+  command: netplan apply
+  changed_when: true

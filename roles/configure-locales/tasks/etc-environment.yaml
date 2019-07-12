@@ -1,0 +1,28 @@
+---
+- name: set LANG to in /etc/environment to {{ configure_locales_default_locale }}
+  lineinfile:
+    path: /etc/environment
+    state: "{{ configure_locales_etc_environments_state }}"
+    regexp: '^LANG='
+    line: 'LANG={{ configure_locales_default_locale }}'
+
+- name: set LANGUAGE to in /etc/environment to {{ configure_locales_default_locale }}
+  lineinfile:
+    path: /etc/environment
+    state: "{{ configure_locales_etc_environments_state }}"
+    regexp: '^LANGUAGE='
+    line: 'LANGUAGE={{ configure_locales_default_locale }}'
+
+- name: set LC_COLLATE to in /etc/environment to C
+  lineinfile:
+    path: /etc/environment
+    state: "{{ configure_locales_etc_environments_state }}"
+    regexp: '^LC_COLLATE='
+    line: 'LC_COLLATE=C'
+
+- name: set LC_CTYPE to in /etc/environment to {{ configure_locales_default_locale }}
+  lineinfile:
+    path: /etc/environment
+    state: "{{ configure_locales_etc_environments_state }}"
+    regexp: '^LC_CTYPE='
+    line: 'LC_CTYPE={{ configure_locales_default_locale }}'
